@@ -1,0 +1,7 @@
+node_modules
+.local-pg
+.env
+.git
+test
+scripts
+*.log

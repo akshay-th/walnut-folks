@@ -1,0 +1,34 @@
+{
+  "name": "transaction-webhook-service",
+  "version": "1.0.0",
+  "description": "Receives payment-processor transaction webhooks, acknowledges them instantly and processes them reliably in the background.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.12"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node src/migrate.js",
+    "test": "node --test --test-concurrency=1 test/",
+    "smoke": "node scripts/smoke-test.js",
+    "db:local": "node scripts/local-db.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "fastify": "^5.12.7",
+    "pg": "^8.23.1",
+    "pino": "^10.4.0"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^18.4.0-beta.17"
+  },
+  "allowScripts": {
+    "@embedded-postgres/darwin-arm64": true,
+    "@embedded-postgres/darwin-x64": true,
+    "@embedded-postgres/linux-arm64": true,
+    "@embedded-postgres/linux-x64": true,
+    "@embedded-postgres/windows-x64": true
+  }
+}

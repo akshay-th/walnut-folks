@@ -1,0 +1,23 @@
+# Render Blueprint (alternative to AWS): New > Blueprint > select this repo,
+# then fill in DATABASE_URL.
+#
+# Free instances sleep after 15 minutes without traffic. The first request
+# then takes about a minute (breaking the 500ms requirement) and background
+# processing pauses until something wakes the service. If you stay on the free
+# plan, point an uptime monitor at GET / every 10 minutes to keep it awake.
+services:
+  - type: web
+    name: transaction-webhook-service
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --omit=dev
+    startCommand: node src/server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_CA_CERT
+        value: certs/supabase-prod-ca-2021.crt
