@@ -2,12 +2,12 @@
 
 A Node.js service that receives transaction webhooks from payment processors (Razorpay-style), acknowledges them in milliseconds, and processes them reliably in the background, exactly once per `transaction_id`.
 
-**Live API:** `http://<ec2-public-ip>` <!-- replace after deploying -->
+**Live API:** [`http://35.76.124.52`](http://35.76.124.52/) (AWS EC2, Tokyo)
 
 Stack: Node.js 22 + Fastify, PostgreSQL on **Supabase**, deployed on **AWS EC2** (Docker).
 
 ```bash
-BASE=http://<ec2-public-ip>   # or http://localhost:3000
+BASE=http://35.76.124.52   # or http://localhost:3000
 curl -s $BASE/
 curl -s -X POST $BASE/v1/webhooks/transactions -H 'content-type: application/json' \
   -d '{"transaction_id":"txn_abc123def456","source_account":"acc_user_789","destination_account":"acc_merchant_456","amount":1500,"currency":"INR"}'
@@ -155,6 +155,8 @@ single transaction PROCESSED after 30s · attempts=1, deliveries=14
 ```
 
 Against the real Supabase project (Tokyo), run from a laptop about 115ms away, all checks pass: 100 webhooks sent 25 at a time took 246ms at p50 and 400ms at p95, mostly network distance. Supabase's REST API, called with the publishable key, returns `401 permission denied` for reads and writes on both tables.
+
+**Live on EC2** (`ap-northeast-1`, the same region as the database), all smoke-test checks pass. In the service's own request logs, webhooks took **6.1ms at p50 and 14ms at p95** over 114 requests; whatever a client measures beyond that is network distance. I also rebooted the instance while a job was running. The service was healthy again 23 seconds later. The interrupted job had been handed back during shutdown, was picked up again after boot, and finished, still counted as a single attempt.
 
 ## Configuration
 
